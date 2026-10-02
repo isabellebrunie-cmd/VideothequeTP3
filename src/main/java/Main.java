@@ -1,19 +1,14 @@
 
 import application.Controller;
-import audio.LecteurMp3;
+import application.Videotheque;
 import exceptions.*;
-import modele.Musique;
-
-import java.io.IOException;
 import java.util.InputMismatchException;
 
 public class Main {
     public static void main(String[] args) {
 
         Controller c = new Controller();
-        //Ajoute les fichiers mp3 automatiquement à la discothèque
-        c.peuplerDiscotheque("aac");
-        //static LecteurMp3 lecteur = new LecteurMp3(null);
+        c.peuplerVideotheque("mp4");
         int choix = -1;
 
         while (true) {
@@ -24,28 +19,22 @@ public class Main {
                 Controller.scan.nextLine();
                 switch (choix) {
                     case 1:
-                        //TODO
+                        c.ajouterVideo();
                         break;
                     case 2:
-                        //TODO
+                        c.listerVideos();
                         break;
                     case 3:
-                        //TODO
+                        c.rechercherVideo();
                         break;
                     case 4:
-                        //TODO
+                        c.supprimerVideo();
                         break;
                     case 5:
-                        //TODO
+                        c.lectureVideo();
                         break;
                     case 6:
-                        //TODO
-                        break;
-                    case 7:
-                        //TODO
-                        break;
-                    case 8:
-                        //TODO
+                        c.convertirVideo();
                         break;
                     case 0:
                         System.out.println("Au revoir !");
@@ -55,8 +44,8 @@ public class Main {
                     default:
                         System.out.println("\u001B[31mChoix invalide, veuillez réessayer.\u001B[0m");
                 }
-            } catch (AlbumDejaExistantException | AlbumIntrouvableException | DiscothequeVideException |
-                     SaisieInvalideException | FichierAudioException | IOException | InterruptedException e) {
+            } catch (ConversionImpossibleException | LectureImpossibleException | VideoDejaExistanteException |
+                     SaisieInvalideException | VideoIntrouvableException | VideothequeVideException e) {
                 System.out.println(e.getMessage());
             } catch (InputMismatchException ime) {
                 Controller.scan.nextLine();

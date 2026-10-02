@@ -2,6 +2,8 @@ package modele;
 
 import exceptions.*;
 
+import java.io.IOException;
+
 public interface GestionVideotheque {
     void ajouterVideo(Video v)
             throws VideoDejaExistanteException, SaisieInvalideException;
@@ -15,5 +17,5 @@ public interface GestionVideotheque {
             LectureImpossibleException;
     Video convertirVideo(String titre, String formatCible)
             throws VideoIntrouvableException, VideothequeVideException,
-            ConversionImpossibleException, SaisieInvalideException;
+            ConversionImpossibleException, SaisieInvalideException, IOException, InterruptedException;
 }

@@ -1,17 +1,19 @@
 package modele;
 
+import exceptions.LectureImpossibleException;
+
 import java.time.LocalDate;
 
 public abstract class Video implements Lisible {
 
     private String titre;
-    private String realistaeur;
+    private String realisateur;
     private LocalDate dateSortie;
     private int duree;
 
-    public Video(String titre, String realistaeur, LocalDate dateSortie, int duree) {
+    public Video(String titre, String realisateur, LocalDate dateSortie, int duree) {
         this.titre = titre;
-        this.realistaeur = realistaeur;
+        this.realisateur = realisateur;
         this.dateSortie = dateSortie;
         this.duree = duree;
     }
@@ -24,12 +26,12 @@ public abstract class Video implements Lisible {
         this.titre = titre;
     }
 
-    public String getRealistaeur() {
-        return realistaeur;
+    public String getRealisateur() {
+        return realisateur;
     }
 
-    public void setRealistaeur(String realistaeur) {
-        this.realistaeur = realistaeur;
+    public void setRealisateur(String realisateur) {
+        this.realisateur = realisateur;
     }
 
     public LocalDate getDateSortie() {
@@ -54,9 +56,14 @@ public abstract class Video implements Lisible {
     public String toString() {
         return "Video{" +
                 "titre='" + titre + '\'' +
-                ", realistaeur='" + realistaeur + '\'' +
+                ", realisateur='" + realisateur + '\'' +
                 ", dateSortie=" + dateSortie +
                 ", duree=" + duree +
                 '}';
     }
+
+    @Override
+    public abstract void lire() throws LectureImpossibleException ;
+
+
 }

@@ -1,161 +1,148 @@
 package application;
-
-import audio.ConvertisseurAudio;
-import audio.LecteurMp3;
-import exceptions.AlbumIntrouvableException;
-import exceptions.DiscothequeVideException;
-import exceptions.FichierAudioException;
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import exceptions.ConversionImpossibleException;
 import exceptions.SaisieInvalideException;
-import modele.Album;
-import modele.CompactDisque;
+import exceptions.VideoIntrouvableException;
+import exceptions.VideothequeVideException;
+import modele.*;
+import video.LecteurVideo;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
-
-import modele.DisqueVinyle;
-import modele.FichierNumerique;
-
 import java.time.format.DateTimeParseException;
-import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Controller {
     public static Scanner scan = new Scanner(System.in);
-    private Discotheque discotheque = new Discotheque();
-    private LecteurMp3 lecteur;
-    private static final List<String> formatAccepte = List.of("aac", "mp3", "flac", "wav");
+    private Videotheque videotheque = new Videotheque();
+    private LecteurVideo lecteur;
+    private static final List<String> formatFichierNumAccepte = List.of("AVI", "MP4");
+    private static Videotheque v = new Videotheque();
 
     // Affiche le menu principal
     public void afficherMenu() {
-        System.out.println("===== GESTION DE LA DISCOTHÈQUE =====");
-        System.out.println("1. Ajouter un album");
-        System.out.println("2. Lister tous les albums");
-        System.out.println("3. Rechercher un album");
-        System.out.println("4. Supprimer un album");
-        System.out.println("5. Modifier la quantité d'un album");
-        System.out.println("6. Écouter un album (MP3)");
-        System.out.println("7. Arrêter la lecture");
-        System.out.println("8. Convertir un album MP3 en AAC");
+        System.out.println("===== GESTION DE LA VIDÉOTHÈQUE =====");
+        System.out.println("1. Ajouter une video");
+        System.out.println("2. Lister toutes les vidéos");
+        System.out.println("3. Rechercher une vidéo");
+        System.out.println("4. Supprimer une vidéo");
+        System.out.println("5. Lire une video");
+        System.out.println("6. Convertir une vidéo");
         System.out.println("0. Quitter");
         System.out.println("=====================================");
     }
 
-    //Durée en MS. taille en Mo, f.extension c'est égal à "mp3, acc..."
-    public void peuplerDiscotheque(String extension) {
+    public void peuplerVideotheque(String extension) {
         String pointExtension = "." + extension;
         File dossier = new File("media/");
         File[] fichiers = dossier.listFiles();
         if (fichiers==null) {
             return;
         }
-        for(File f : fichiers) {
-            if(f.getName().endsWith(pointExtension)) {
-                FichierNumerique fn = new FichierNumerique(f.getName().replace(pointExtension, ""), f.getName().replace(pointExtension, "Auteur"),
-                                      LocalDate.now(), 1, extension, f.length(), 0);
-                discotheque.ajouterAlbum(fn);
+        if(extension.equalsIgnoreCase("mp4")) {
+            for(File f : fichiers) {
+                if(f.getName().endsWith(pointExtension)) {
+                    FichierVideo fv = new VideoMp4(f.getName().replace(pointExtension, ""), f.getName().replace(pointExtension, "Auteur"),
+                            LocalDate.now(), 0) {
+                    };
+                    videotheque.ajouterVideo(fv);
+                }
             }
+            return;
         }
+
+        if(extension.equalsIgnoreCase("avi")) {
+            for(File f : fichiers) {
+                if(f.getName().endsWith(pointExtension)) {
+                    FichierVideo fv = new VideoAvi(f.getName().replace(pointExtension, ""), f.getName().replace(pointExtension, "Auteur"),
+                            LocalDate.now(), 0) {
+                    };
+                    videotheque.ajouterVideo(fv);
+                }
+            }
+            return;
+        }
+        System.out.println("Problème d'extension de fichier (AVI/MP4)");
+        return;
     }
 
-    public void ajouterAlbum() {
+    public void ajouterVideo() {
         try {
-            int typeAlbum = saisieInt("Type d'album (1 = CD, 2 = Vinyle, 3 = Fichier numérique) :");
-            if (typeAlbum < 1 || typeAlbum > 3)
+            int typeVideo = saisieInt("Type de vidéo (1 = DVD, 2 = FichierVideo) :");
+            if(typeVideo < 1 || typeVideo > 2)
                 throw new SaisieInvalideException("Veuillez saisir un nombre valide");
-            String nomAlbum = saisieNom("Saisissez le nom de l'album :");
-            String nomAuteur = saisieNom("Saisissez le nom de l'auteur :");
-            LocalDate dAnneeAlbum = saisieDate("Saisissez l'année de l'album jj/mm/aaaa :");
+            String titreVideo = saisieString("Saisissez le titre de la vidéo :");
+            String realisateurVideo = saisieString("Saisissez le nom du réalisateur :");
+            LocalDate dateSortie = saisieDate("Saisissez l'année de sortie jj/mm/aaaa :");
+            int dureeVideo = saisieInt("Saisissez la durée de la vidéo (minutes) :");
 
-            int quantite = saisieInt("Saisissez le nombre d'album :");
-
-            Album album = null;
-            if(typeAlbum == 1) {
-                album = ajouterCompactDisque(nomAlbum, nomAuteur, dAnneeAlbum, quantite);
-            } else if (typeAlbum == 2) {
-                album = ajouterDisqueVinyle(nomAlbum, nomAuteur, dAnneeAlbum, quantite);
-
+            Video video = null;
+            if(typeVideo == 1) {
+                video = ajouterDvd(titreVideo, realisateurVideo, dateSortie, dureeVideo);
             } else {
-                album = ajouterFichierNumerique(nomAlbum, nomAuteur, dAnneeAlbum, quantite);
+                video = ajouterFichierVideo(titreVideo, realisateurVideo, dateSortie, dureeVideo);
             }
-
-            if(album!=null) {
-                discotheque.ajouterAlbum(album);
-                System.out.println("Album ajouté avec succès !");
+            if(video==null) {
+                throw new SaisieInvalideException("Impossible d'ajouter la vidéo");
             }
-
+            videotheque.ajouterVideo(video);
+            System.out.println("Vidéo ajoutée avec succès !");
         } catch (SaisieInvalideException | DateTimeParseException e) {
             System.err.println(e.getMessage());
         }
     }
 
-    public CompactDisque ajouterCompactDisque(String nomAlbum, String nomAuteur, LocalDate dAnneeAlbum, int quantite) {
+    private Dvd ajouterDvd(String titre, String realisateur, LocalDate dateSortie, int duree) {
         try {
-            String numero = saisieNom("Saisissez le numéro du CD --> (CD-001) :");
-            String type = saisieNom("Saisissez le type de CD --> Simple ou Double :");
+            String numeroDvd = saisieString("Saisissez le numéro du DVD --> DVD-001 :");
+            int zoneDvd = saisieInt("Saisissez la zone du DVD :");
 
-            return new CompactDisque(nomAlbum, nomAuteur, dAnneeAlbum, quantite, numero, type);
-        } catch (SaisieInvalideException e) {
+            return new Dvd(titre, realisateur, dateSortie, duree, numeroDvd, zoneDvd);
+        } catch(SaisieInvalideException e) {
             System.err.println(e.getMessage());
+            return null;
         }
-        return null;
     }
 
-    public DisqueVinyle ajouterDisqueVinyle(String nom, String auteur, LocalDate date, int quantite) {
+    private Video ajouterFichierVideo(String titre, String realisateur, LocalDate dateSortie, int duree) {
         try {
-            String numero = saisieNom("Numéro du vinyle :");
-            int taille = saisieInt("Taille du vinyle (diamètre en cm : 17, 25 ou 30) : ");
-            if (taille != 17 && taille != 25 && taille != 30)
-                throw new SaisieInvalideException("Veuillez saisir un nombre valide (17, 25 ou 30)");
-            return new DisqueVinyle(nom, auteur, date, quantite, numero, taille);
-        } catch (SaisieInvalideException e) {
-            System.out.println(e.getMessage());
+            String extension = saisieString("Saisissez l'extension du fichier --> mp4/avi :");
+            if(extension.equalsIgnoreCase("mp4")) {
+                VideoMp4 mp4 = new VideoMp4(titre, realisateur, dateSortie, duree);
+                return mp4;
+            }
+            if(extension.equalsIgnoreCase("avi")) {
+                VideoAvi avi = new VideoAvi(titre, realisateur, dateSortie, duree);
+                return avi;
+            }
+            throw new SaisieInvalideException("L'extension de fichier est invalide --> (avi/mp4)");
+
+        } catch(SaisieInvalideException e) {
+            System.err.println(e.getMessage());
+            return null;
         }
-        return null;
     }
 
-    public FichierNumerique ajouterFichierNumerique(String nom, String auteur, LocalDate date, int quantite) {
-        try {
-            String format = saisieNom("Format du fichier --> (AAC, FLAC, MP3, WAV) : ");
-            if (!formatAccepte.contains(format.toLowerCase()))
-                throw new SaisieInvalideException("Veuillez saisir un format de fichier valide");
-            double taille = saisieDouble("Taille du fichier (en Mo) : ");
-            int duree = saisieInt("Durée de l'album (en minute) : ");
-            return new FichierNumerique(nom, auteur, date, quantite, format, taille, duree);
-        } catch (SaisieInvalideException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
+    public void listerVideos() {
+        videotheque.listerVideos();
     }
 
-    public void afficherDiscotheque() {
-        discotheque.listerAblums();
+    public void rechercherVideo() {
+        String titreVideo = saisieString("Veuillez saisir le nom de la vidéo à afficher :");
+        Video v = videotheque.rechercherVideo(titreVideo);
+        System.out.println(v.toString());
     }
 
-    public void afficherAlbum() throws AlbumIntrouvableException, DiscothequeVideException {
-        String aNom = saisieNom("Veuillez saisir le nom de l'album à afficher");
-        modele.Album a = discotheque.rechercherAlbum(aNom);
-        System.out.println(a.toString());
+    public void supprimerVideo() {
+        String titreVideo = saisieString("Veuillez saisir le nom de la vidéo à supprimer :");
+        videotheque.supprimerVideo(titreVideo);
     }
 
-    public void supprimerAlbum() {
-        String nom = saisieNom("Saisir le nom de l'album à supprimer :");
-        discotheque.supprimerAlbum(nom);
-    }
-
-    public void modifierQuantiteAlbum(){
-        String nom = saisieNom("Saisir le nom de l'album dont vous voulez modifier la quantité");
-        System.out.println("Saisir la quantité");
-        int qte = saisieInt("Saisir la quantité :");
-        if(qte<0)throw new SaisieInvalideException("La quantité doit-être supérieur ou égale à 0");
-        discotheque.modifierQuantiteAlbum(nom,qte);
-    }
-
-    public String saisieNom(String msg) throws SaisieInvalideException {
+    public String saisieString(String msg) throws SaisieInvalideException {
         System.out.println(msg);
         String nom = scan.nextLine();
         if (nom.isEmpty()) {
@@ -205,37 +192,27 @@ public class Controller {
         }
     }
 
-    public void lectureAlbum() throws AlbumIntrouvableException, SaisieInvalideException, FichierAudioException {
-        String nom = saisieNom("Saisir le nom de l'album à écouter : ");
-        Album a = discotheque.rechercherAlbum(nom);
-        if (!(a instanceof FichierNumerique fn))
-            throw new FichierAudioException("!! ERREUR : '" + a.getNom() + "est un " + a.getSupport() + " : seul un fichier numérique peut être lu");
-        if (lecteur!=null && lecteur.estEnCours()) // TODO arreter la lecture en cours (si il y en a)
-            arreterLecture();
-        lecteur = new LecteurMp3(fn);
-        lecteur.demarrer();
-        System.out.println("Lecture de '" + fn.getNom() + "' lancée. Bonne écoute !");
+    public void convertirVideo() {
+        try {
+            String titre = saisieString("Saisir le nom du fichier à convertir : ");
+            String format = saisieString("Saisir le format de conversion : ");
+            videotheque.convertirVideo(titre, format);
+        } catch (VideoIntrouvableException | VideothequeVideException | ConversionImpossibleException |
+                 SaisieInvalideException | IOException | InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    public void arreterLecture() {
-        if (lecteur==null || !lecteur.estEnCours())
-            throw new FichierAudioException("Il n'y a pas de lecture en cours.");
-        int tempsMs = lecteur.getPosition(); // TODO récuperer le temps de lecture
-        lecteur.arreter(); // TODO arrete la lecture
-        System.out.println("Lecture arrêtée à " + (tempsMs / 1000) + " secondes");
+    public void lectureVideo() {
+        String titre = saisieString("Saisir le titre de la video à regarder : ");
+        videotheque.lireVideo(titre);
     }
 
-    public void convertirFichierAudio() throws AlbumIntrouvableException, DiscothequeVideException, FichierAudioException, IOException, InterruptedException {
-        String nom = saisieNom("Saisir le nom de l'album à convertir en AAC : ");
-        Album a = discotheque.rechercherAlbum(nom);
-        if (!(a instanceof FichierNumerique fn))
-            throw new FichierAudioException("!! ERREUR : '" + a.getNom() + "est un " + a.getSupport() + " : seul un fichier numérique peut être converti");
-        if (fn.getFormat().equalsIgnoreCase("aac"))
-            throw new FichierAudioException("Le fichier est déjà au format AAC");
-        if (!fn.getFormat().equalsIgnoreCase("mp3"))
-            throw new FichierAudioException("Le fichier n'est pas au format mp3");
-        //TODO convertir le fichier avec Ffmpeg
-        ConvertisseurAudio.mp3VersAac(fn);
-        System.out.println("Le fichier a été converti");
-    }
+//    public static String hashPassword(String password) {
+//        // Définir
+//        int logRounds = 12;
+//
+//        String salt = BCrypt.gensalt(logRounds);
+//        return BCrypt.hashpw(password, salt);
+//    }
 }
