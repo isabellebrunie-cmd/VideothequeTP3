@@ -7,6 +7,7 @@ import modele.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Streamer {
 
@@ -21,12 +22,12 @@ public class Streamer {
     /**
      * ffmpeg -re [-stream_loop -1] -i fichier <options du format> <sortie>
      */
-    public void diffuserFichier(FichierVideo video, String nomFlux, boolean boucle)
+    public static void diffuserFichier(FichierVideo video, String nomFlux, boolean boucle)
             throws StreamingException, SaisieInvalideException {
         /* TODO */
 
         List<String> commande = new ArrayList<>();
-        commande.add("ffmpeg");
+        commande.add("ffmpeg.exe");
         commande.add("-re");
 
         if (boucle) {                 //dans le cas d'une diffusion en boucle
@@ -38,14 +39,12 @@ public class Streamer {
         commande.addAll(video.getOptionsStreaming());
 
         commande.add("-f");
-        commande.add("rtsp");
-        commande.add("-rtsp_transport");
-        commande.add("tcp");
+        commande.add("flv");
 
+        commande.add("rtmp://172.16.120.28:1935/live");
+        //commande.add(urlServeur);
 
-        commande.add(nomFlux);
-
-        //System.out.println(commande);
+        System.out.println(commande);
 
         try {
             ProcessBuilder pb = new ProcessBuilder(commande);
@@ -62,7 +61,46 @@ public class Streamer {
      * ffmpeg <entrée caméra selon le système> <encodage direct> <sortie>
      */
     public void diffuserCamera(String nomFlux)
-            throws StreamingException, SaisieInvalideException { /* TODO */ }
+            throws StreamingException, SaisieInvalideException {
+        /* TODO */
+        List<String> commande = new ArrayList<>();
+        commande.add("ffmpeg");
+
+        //Détection du système de la machine distante (Windows/Linux/Mac)
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.indexOf("win") >=0) {
+            commande.add("-f");
+            commande.add("dshow");
+            commande.add("-rtbufsize");
+            commande.add("100M");
+            commande.add("-video_size");
+            commande.add("1280x720");
+            commande.add("-framerate");
+            commande.add("30");
+            commande.add("-i");
+            //Check le nom des périphériques video et audi de la machine distante
+            commande.add("video=\"Integrated Camera\":audio=\"Microphone (Realtek(R) Audio)\"");
+            commande.add("-c:v");
+            commande.add("libx264");
+            commande.add("-preset");
+            commande.add("ultrafast");
+            commande.add("-tune");
+            commande.add("zerolatency");
+            commande.add("-pix_fmt");
+            commande.add("yuv420p");
+            commande.add("-g");
+            commande.add("30");
+
+        } else if (os.indexOf("mac") >=0) {
+
+        } else if (os.indexOf("nux") >=0){
+
+        }
+
+
+
+
+    }
 
     /**
      * Arrête proprement ffmpeg : envoie "q" sur son entrée standard,
