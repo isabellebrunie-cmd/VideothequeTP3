@@ -31,6 +31,11 @@ public class VideoAvi extends FichierVideo {
     }
 
     @Override
+    public String toString() {
+        return super.toString() + "AVI";
+    }
+
+    @Override
     protected List<String> optionsStreaming() {
         List<String> options = new ArrayList<>();
         options.add("-c:v");

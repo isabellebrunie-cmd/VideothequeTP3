@@ -43,7 +43,7 @@ public class Controller {
         if (fichiers==null) {
             return;
         }
-        if(extension.toLowerCase() == "mp4") {
+        if(extension.equalsIgnoreCase("mp4")) {
             for(File f : fichiers) {
                 if(f.getName().endsWith(pointExtension)) {
                     FichierVideo fv = new VideoMp4(f.getName().replace(pointExtension, ""), f.getName().replace(pointExtension, "Auteur"),
@@ -55,7 +55,7 @@ public class Controller {
             return;
         }
 
-        if(extension.toLowerCase() == "avi") {
+        if(extension.equalsIgnoreCase("avi")) {
             for(File f : fichiers) {
                 if(f.getName().endsWith(pointExtension)) {
                     FichierVideo fv = new VideoAvi(f.getName().replace(pointExtension, ""), f.getName().replace(pointExtension, "Auteur"),
@@ -110,15 +110,13 @@ public class Controller {
 
     private Video ajouterFichierVideo(String titre, String realisateur, LocalDate dateSortie, int duree) {
         try {
-            String chemin = saisieString("Saisissez le chemin du fichier --> media/fichier.mp4 :");
-            if(chemin.toLowerCase().endsWith(".mp4")) {
+            String extension = saisieString("Saisissez l'extension du fichier --> mp4/avi :");
+            if(extension.equalsIgnoreCase("mp4")) {
                 VideoMp4 mp4 = new VideoMp4(titre, realisateur, dateSortie, duree);
-                mp4.setChemin(chemin);
                 return mp4;
             }
-            if(chemin.toLowerCase().endsWith(".avi")) {
+            if(extension.equalsIgnoreCase("avi")) {
                 VideoAvi avi = new VideoAvi(titre, realisateur, dateSortie, duree);
-                avi.setChemin(chemin);
                 return avi;
             }
             throw new SaisieInvalideException("L'extension de fichier est invalide --> (avi/mp4)");
@@ -198,7 +196,7 @@ public class Controller {
         try {
             String titre = saisieString("Saisir le nom du fichier à convertir : ");
             String format = saisieString("Saisir le format de conversion : ");
-            v.convertirVideo(titre, format);
+            videotheque.convertirVideo(titre, format);
         } catch (VideoIntrouvableException | VideothequeVideException | ConversionImpossibleException |
                  SaisieInvalideException | IOException | InterruptedException e) {
             System.out.println(e.getMessage());
@@ -207,7 +205,7 @@ public class Controller {
 
     public void lectureVideo() {
         String titre = saisieString("Saisir le titre de la video à regarder : ");
-        v.lireVideo(titre);
+        videotheque.lireVideo(titre);
     }
 
 //    public static String hashPassword(String password) {

@@ -24,27 +24,46 @@ public class Videotheque implements GestionVideotheque {
     private LecteurVideo lecteur;
 
     @Override
-    public void ajouterVideo(Video v) throws VideoDejaExistanteException, SaisieInvalideException {
-        // TODO permettre les Video (Dvd...) et pour FichierVideo check si il existe bien dans media/
-        for(Video video : videotheque) {
-            // Ajoute uniquement les fichier de type FichierVideo ?? (instanceof)
-            if(v instanceof FichierVideo) {
-                File dossier = new File("media/");
-                File[] fichiers = dossier.listFiles();
-                if(fichiers==null)
-                    throw new VideoIntrouvableException("Aucune vidéo dans le dossier");
-                boolean existe = false;
-                for(File f : fichiers) {
-                    if(f.getName().endsWith(video.getSupport().toLowerCase()))
-                        existe = true;
-                }
-                if(!existe)
-                    throw new VideoIntrouvableException("Vidéo non trouvée dans le dossier");
+    public void ajouterVideo(Video v)
+            throws VideoDejaExistanteException, SaisieInvalideException {
+
+        // Vérification spécifique aux FichierVideo
+        if (v instanceof FichierVideo) {
+            File dossier = new File("media/");
+            File[] fichiers = dossier.listFiles();
+
+            if (fichiers == null) {
+                throw new VideoIntrouvableException(
+                        "Aucune vidéo dans le dossier"
+                );
             }
-            if(video.getTitre().equalsIgnoreCase(v.getTitre()))
-                throw new VideoDejaExistanteException("La vidéo " + v.getTitre() + " existe déjà.");
-            videotheque.add(v);
+
+            boolean existe = false;
+
+            for (File f : fichiers) {
+                if (f.getName().equalsIgnoreCase(
+                        v.getTitre() + "." + v.getSupport())) {
+                    existe = true;
+                    break;
+                }
+            }
+            if (!existe) {
+                throw new VideoIntrouvableException(
+                        "Vidéo non trouvée dans le dossier"
+                );
+            }
         }
+
+        // Vérification des doublons
+        for (Video video : videotheque) {
+            if (video.getTitre().equalsIgnoreCase(v.getTitre())) {
+                throw new VideoDejaExistanteException(
+                        "La vidéo " + v.getTitre() + " existe déjà."
+                );
+            }
+        }
+        // Tout est OK
+        videotheque.add(v);
     }
 
     @Override
@@ -52,12 +71,13 @@ public class Videotheque implements GestionVideotheque {
         // TODO
         if (videotheque.isEmpty())
             throw new VideothequeVideException("La vidéothèque est vide");
-        System.out.println(this);
+        System.out.println(videotheque);
     }
 
     @Override
     public Video rechercherVideo(String titre) throws VideoIntrouvableException, VideothequeVideException {
         // TODO
+        System.out.println(videotheque);
         if (videotheque.isEmpty())
             throw new VideothequeVideException("La vidéothèque est vide");
         for (Video video : videotheque)
@@ -74,12 +94,16 @@ public class Videotheque implements GestionVideotheque {
     }
 
     @Override
-    public void lireVideo(String titre) throws VideoIntrouvableException, VideothequeVideException, LectureImpossibleException {
+    public void lireVideo(String titre) throws
+            VideoIntrouvableException, VideothequeVideException, LectureImpossibleException {
+        //System.out.println("non");
         Video videoaALire = rechercherVideo(titre);
         if (!(videoaALire instanceof VideoAvi || videoaALire instanceof VideoMp4 || videoaALire instanceof Dvd)) {
+            //System.out.println("oui");
             throw new LectureImpossibleException("!! Erreur : '" + videoaALire.getTitre() + " n'est pas un fichier video.");
         }
         videoaALire.lire();
+        //System.out.println("peut etre");
         if ((videoaALire instanceof VideoAvi) | (videoaALire instanceof VideoMp4)) {
             System.out.println("Lecture de \"" + videoaALire.getTitre() + "\" lancée. Bonne écoute !");
         }
@@ -93,7 +117,8 @@ public class Videotheque implements GestionVideotheque {
     }
 
     @Override
-    public Video convertirVideo(String titre, String formatCible) throws VideoIntrouvableException, VideothequeVideException, ConversionImpossibleException, SaisieInvalideException, IOException, InterruptedException {
+    public Video convertirVideo(String titre, String formatCible) throws
+            VideoIntrouvableException, VideothequeVideException, ConversionImpossibleException, SaisieInvalideException, IOException, InterruptedException {
         FichierVideo fichierAconvertir = (FichierVideo) rechercherVideo(titre);
         FichierVideo fichierConverti;
         if (!(fichierAconvertir instanceof Convertible))
