@@ -6,8 +6,12 @@ import java.util.InputMismatchException;
 
 public class Main {
     public static void main(String[] args) {
-
         Controller c = new Controller();
+
+        //Login
+        c.login();
+
+        //Affichage du menu
         c.peuplerVideotheque("mp4");
         int choix = -1;
 
