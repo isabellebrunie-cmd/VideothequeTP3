@@ -2,6 +2,8 @@ package application;
 
 import exceptions.*;
 import modele.*;
+import outils.Ffmpeg;
+import outils.Streamer;
 import video.ConvertisseurVideo;
 import video.LecteurVideo;
 
@@ -133,4 +135,23 @@ public class Videotheque implements GestionVideotheque {
         videotheque.set(index, fichierConverti);
         return fichierConverti;
     }
+
+    public void diffuserVideo(String nomFichier) throws ConversionImpossibleException {
+        Video videoaADiffuser = rechercherVideo(nomFichier);
+        if (!(videoaADiffuser instanceof FichierVideo)) {
+            throw new LectureImpossibleException("!! Erreur : '" + videoaADiffuser.getTitre() + " n'est pas un fichier video.");
+        }
+        //Demander le nom du flux : donner par défaut pour simplifer les tests : rtmp
+        String nomFlux = "rtmp";
+        //Diffusion continue par défaut
+
+        try {
+            Streamer.diffuserFichier((FichierVideo) videoaADiffuser, nomFlux, true);
+            System.out.println("Conversion terminée !");
+        } catch (ConversionImpossibleException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
 }

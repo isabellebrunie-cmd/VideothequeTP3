@@ -32,6 +32,9 @@ public class Controller {
         System.out.println("4. Supprimer une vidéo");
         System.out.println("5. Lire une video");
         System.out.println("6. Convertir une vidéo");
+        System.out.println("7. Diffuser une vidéo en streaming");
+        System.out.println("8. Diffuser la caméra du laptop");
+        System.out.println("9. Arrêter la diffusion");
         System.out.println("0. Quitter");
         System.out.println("=====================================");
     }
@@ -215,4 +218,18 @@ public class Controller {
 //        String salt = BCrypt.gensalt(logRounds);
 //        return BCrypt.hashpw(password, salt);
 //    }
+
+    public void diffuserVideo(){
+        try {
+            String nomFichier = saisieString("Saisir le nom du fichier à diffuser : ");
+            videotheque.diffuserVideo(nomFichier);
+        } catch (VideoIntrouvableException | VideothequeVideException |
+                 SaisieInvalideException e) {
+            System.out.println(e.getMessage());
+        }
+        //TODO demander nom flux
+        //TODO demander si diffusion continue
+    }
+
+
 }
