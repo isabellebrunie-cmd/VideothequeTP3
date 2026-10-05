@@ -1,4 +1,5 @@
 package application;
+
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import exceptions.ConversionImpossibleException;
 import exceptions.SaisieInvalideException;
@@ -23,6 +24,39 @@ public class Controller {
     private static final List<String> formatFichierNumAccepte = List.of("AVI", "MP4");
     private static Videotheque v = new Videotheque();
 
+
+    //Création de mot de passe
+    public char[] createPassword(){
+        String NewPassword = saisieString("Veuillez saisir votre nouveau mot de passe de connexion : ");
+        return BCrypt.withDefaults().hashToChar(12, NewPassword.toCharArray());
+    }
+
+
+    //Connexion avec mot de passe
+    public void login() {
+        boolean res = false;
+
+        //Le mot de passe enregistré pour l'exemple (https://bcrypt.fr)
+        //Sinon demander à enregistrer un mot de passe avant avec la fonction createPassword()
+        String password = "$2y$10$z5x0I/EnOfrrjgN/VdGSZuTr3SAONZjsfU4XPp3QN9s4nJxLu5E2q";
+
+        do {
+            String PassWordATester = saisieString("Veuillez saisir votre mot de passe de connexion : ");
+
+            //Comparaison des hashs (result est un objet Result)
+            BCrypt.Result result = BCrypt.verifyer().verify(PassWordATester.toCharArray(), password.toCharArray());
+
+            //result.verified renvoie un booléen selon le résultat de la comparaison des hashs
+            if (result.verified) {
+                System.out.println("Vous êtes maintenant connecté !");
+                res = true;
+            } else {
+                System.out.println("Mot de passe incorrect");
+            }
+
+        } while (!res);
+    }
+
     // Affiche le menu principal
     public void afficherMenu() {
         System.out.println("===== GESTION DE LA VIDÉOTHÈQUE =====");
@@ -43,12 +77,12 @@ public class Controller {
         String pointExtension = "." + extension;
         File dossier = new File("media/");
         File[] fichiers = dossier.listFiles();
-        if (fichiers==null) {
+        if (fichiers == null) {
             return;
         }
-        if(extension.equalsIgnoreCase("mp4")) {
-            for(File f : fichiers) {
-                if(f.getName().endsWith(pointExtension)) {
+        if (extension.equalsIgnoreCase("mp4")) {
+            for (File f : fichiers) {
+                if (f.getName().endsWith(pointExtension)) {
                     FichierVideo fv = new VideoMp4(f.getName().replace(pointExtension, ""), f.getName().replace(pointExtension, "Auteur"),
                             LocalDate.now(), 0) {
                     };
@@ -58,9 +92,9 @@ public class Controller {
             return;
         }
 
-        if(extension.equalsIgnoreCase("avi")) {
-            for(File f : fichiers) {
-                if(f.getName().endsWith(pointExtension)) {
+        if (extension.equalsIgnoreCase("avi")) {
+            for (File f : fichiers) {
+                if (f.getName().endsWith(pointExtension)) {
                     FichierVideo fv = new VideoAvi(f.getName().replace(pointExtension, ""), f.getName().replace(pointExtension, "Auteur"),
                             LocalDate.now(), 0) {
                     };
@@ -76,7 +110,7 @@ public class Controller {
     public void ajouterVideo() {
         try {
             int typeVideo = saisieInt("Type de vidéo (1 = DVD, 2 = FichierVideo) :");
-            if(typeVideo < 1 || typeVideo > 2)
+            if (typeVideo < 1 || typeVideo > 2)
                 throw new SaisieInvalideException("Veuillez saisir un nombre valide");
             String titreVideo = saisieString("Saisissez le titre de la vidéo :");
             String realisateurVideo = saisieString("Saisissez le nom du réalisateur :");
@@ -84,12 +118,12 @@ public class Controller {
             int dureeVideo = saisieInt("Saisissez la durée de la vidéo (minutes) :");
 
             Video video = null;
-            if(typeVideo == 1) {
+            if (typeVideo == 1) {
                 video = ajouterDvd(titreVideo, realisateurVideo, dateSortie, dureeVideo);
             } else {
                 video = ajouterFichierVideo(titreVideo, realisateurVideo, dateSortie, dureeVideo);
             }
-            if(video==null) {
+            if (video == null) {
                 throw new SaisieInvalideException("Impossible d'ajouter la vidéo");
             }
             videotheque.ajouterVideo(video);
@@ -105,7 +139,7 @@ public class Controller {
             int zoneDvd = saisieInt("Saisissez la zone du DVD :");
 
             return new Dvd(titre, realisateur, dateSortie, duree, numeroDvd, zoneDvd);
-        } catch(SaisieInvalideException e) {
+        } catch (SaisieInvalideException e) {
             System.err.println(e.getMessage());
             return null;
         }
@@ -114,17 +148,17 @@ public class Controller {
     private Video ajouterFichierVideo(String titre, String realisateur, LocalDate dateSortie, int duree) {
         try {
             String extension = saisieString("Saisissez l'extension du fichier --> mp4/avi :");
-            if(extension.equalsIgnoreCase("mp4")) {
+            if (extension.equalsIgnoreCase("mp4")) {
                 VideoMp4 mp4 = new VideoMp4(titre, realisateur, dateSortie, duree);
                 return mp4;
             }
-            if(extension.equalsIgnoreCase("avi")) {
+            if (extension.equalsIgnoreCase("avi")) {
                 VideoAvi avi = new VideoAvi(titre, realisateur, dateSortie, duree);
                 return avi;
             }
             throw new SaisieInvalideException("L'extension de fichier est invalide --> (avi/mp4)");
 
-        } catch(SaisieInvalideException e) {
+        } catch (SaisieInvalideException e) {
             System.err.println(e.getMessage());
             return null;
         }
@@ -155,7 +189,7 @@ public class Controller {
     }
 
     public LocalDate saisieDate(String msg) throws SaisieInvalideException {
-        while(true) {
+        while (true) {
             System.out.print(msg);
             String saisie = scan.nextLine();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -219,7 +253,7 @@ public class Controller {
 //        return BCrypt.hashpw(password, salt);
 //    }
 
-    public void diffuserVideo(){
+    public void diffuserVideo() {
         try {
             String nomFichier = saisieString("Saisir le nom du fichier à diffuser : ");
             videotheque.diffuserVideo(nomFichier);
