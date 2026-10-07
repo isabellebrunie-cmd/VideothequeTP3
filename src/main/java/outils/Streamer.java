@@ -2,12 +2,11 @@ package outils;
 
 import exceptions.SaisieInvalideException;
 import exceptions.StreamingException;
-import modele.*;
+import modele.FichierVideo;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class Streamer {
 
@@ -68,7 +67,7 @@ public class Streamer {
 
         //Détection du système de la machine distante (Windows/Linux/Mac)
         String os = System.getProperty("os.name").toLowerCase();
-        if (os.indexOf("win") >=0) {
+        if (os.indexOf("win") >= 0) {
             commande.add("-f");
             commande.add("dshow");
             commande.add("-rtbufsize");
@@ -91,14 +90,11 @@ public class Streamer {
             commande.add("-g");
             commande.add("30");
 
-        } else if (os.indexOf("mac") >=0) {
+        } else if (os.indexOf("mac") >= 0) {
 
-        } else if (os.indexOf("nux") >=0){
+        } else if (os.indexOf("nux") >= 0) {
 
         }
-
-
-
 
     }
 

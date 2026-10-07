@@ -6,7 +6,6 @@ import java.util.List;
 
 public class VideoMp4 extends FichierVideo {
 
-
     public VideoMp4(String titre, String realisateur, LocalDate dateSortie, int duree) {
         super(titre, realisateur, dateSortie, duree);
     }
@@ -18,7 +17,6 @@ public class VideoMp4 extends FichierVideo {
 
     @Override
     protected List<String> optionEncodage() {
-        // TODO
         List<String> options = new ArrayList<>();
         options.add("-c:v");
         options.add("libx264");
@@ -30,7 +28,6 @@ public class VideoMp4 extends FichierVideo {
         options.add("aac");
         options.add("-b:a");
         options.add("160k");
-
         return options;
     }
 
@@ -46,6 +43,5 @@ public class VideoMp4 extends FichierVideo {
         options.add("copy");
         return options;
     }
-
 
 }

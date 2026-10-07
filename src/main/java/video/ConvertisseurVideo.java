@@ -1,7 +1,6 @@
 package video;
 
 import exceptions.ConversionImpossibleException;
-import modele.FichierVideo;
 import outils.Ffmpeg;
 
 import java.io.File;
@@ -28,7 +27,6 @@ public class ConvertisseurVideo implements Runnable {
         thread.start();
         System.out.println(Thread.currentThread().getName() + " - Lancement du thread de conversion.");
     }
-
 
     @Override
     public void run() {

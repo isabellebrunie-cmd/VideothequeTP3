@@ -5,7 +5,6 @@ import exceptions.LectureImpossibleException;
 import java.time.LocalDate;
 
 public abstract class Video implements Lisible {
-
     private String titre;
     private String realisateur;
     private LocalDate dateSortie;
@@ -63,7 +62,5 @@ public abstract class Video implements Lisible {
     }
 
     @Override
-    public abstract void lire() throws LectureImpossibleException ;
-
-
+    public abstract void lire() throws LectureImpossibleException;
 }
