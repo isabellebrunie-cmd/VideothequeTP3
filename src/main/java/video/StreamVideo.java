@@ -10,12 +10,13 @@ public class StreamVideo implements Runnable {
     private volatile boolean diffContinue;
     private volatile boolean arretDemande;
     private Thread thread;
+    private final Streamer streamer;
 
-
-    public StreamVideo(FichierVideo video, String nomFlux, boolean diffContinue) {
+    public StreamVideo(FichierVideo video, String nomFlux, boolean diffContinue, Streamer streamer) {
         this.video = video;
         this.nomFlux = nomFlux;
         this.diffContinue = diffContinue;
+        this.streamer = streamer;
     }
 
     /**
@@ -38,11 +39,15 @@ public class StreamVideo implements Runnable {
     @Override
     public void run() {
         try {
-            Streamer.diffuserFichier(video, nomFlux, diffContinue);
+            streamer.diffuserFichier(video, nomFlux, diffContinue);
         } catch (StreamingException e) {
-            System.out.println(e.getMessage());
+            if (!arretDemande) {
+                System.out.println(e.getMessage());
+            }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            if (!arretDemande) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -50,7 +55,8 @@ public class StreamVideo implements Runnable {
      * Arrête la lecture depuis un autre thread : arrêt de la video.
      */
     public void arreter() {
-        //TODO
+        arretDemande = true;
+        streamer.arreter();
     }
 
     public boolean estEnCours() {
