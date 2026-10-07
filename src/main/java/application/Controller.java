@@ -68,6 +68,7 @@ public class Controller {
         System.out.println("7. Diffuser une vidéo en streaming");
         System.out.println("8. Diffuser la caméra du laptop -> pas encore disponible");
         System.out.println("9. Arrêter la diffusion");
+        System.out.println("10. Sauvegarder la vidéothèque");
         System.out.println("0. Quitter");
         System.out.println("=====================================");
     }
@@ -259,5 +260,9 @@ public class Controller {
 
     public void arreterStream() {
         videotheque.arreterStream();
+    }
+
+    public void sauvegarderVideotheque(StockageJson dataJson) {
+        videotheque.sauvegarder(dataJson);
     }
 }

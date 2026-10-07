@@ -1,5 +1,9 @@
 package modele;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import exceptions.ConversionImpossibleException;
 import exceptions.VideoIntrouvableException;
 import video.ConvertisseurVideo;

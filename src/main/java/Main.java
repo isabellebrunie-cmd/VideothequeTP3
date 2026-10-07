@@ -1,8 +1,10 @@
 import application.Controller;
 import exceptions.*;
+import modele.StockageJson;
 import outils.Streamer;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.InputMismatchException;
 
 public class Main {
@@ -10,6 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         Controller c = new Controller(streamer);
+        StockageJson dataJson = new StockageJson(Path.of("data", "videotheque.json"));
 
         //Login par mot de passe déjà enregistré
         //c.login();
@@ -51,6 +54,9 @@ public class Main {
                         //break;
                     case 9:
                         c.arreterStream();
+                        break;
+                    case 10:
+                        c.sauvegarderVideotheque(dataJson);
                         break;
                     case 0:
                         System.out.println("Au revoir !");

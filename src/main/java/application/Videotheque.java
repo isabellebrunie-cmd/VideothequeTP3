@@ -171,4 +171,8 @@ public class Videotheque implements GestionVideotheque {
         System.out.println("Arrêt du stream !");
     }
 
+    public void sauvegarder(StockageJson dataJson) {
+        dataJson.sauvegarder(videotheque);
+    }
+
 }

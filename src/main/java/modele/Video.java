@@ -1,8 +1,24 @@
 package modele;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import exceptions.LectureImpossibleException;
 
 import java.time.LocalDate;
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = VideoAvi.class, name = "Video avi"),
+        @JsonSubTypes.Type(value = VideoMp4.class, name = "Video mp4"),
+        @JsonSubTypes.Type(value = Dvd.class, name = "Dvd")
+})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 
 public abstract class Video implements Lisible {
     private String titre;
