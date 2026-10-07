@@ -1,17 +1,9 @@
 package video;
 
-import exceptions.ConversionImpossibleException;
 import exceptions.LectureImpossibleException;
-import exceptions.VideoIntrouvableException;
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.Player;
-import modele.FichierVideo;
-import modele.VideoAvi;
-import modele.VideoMp4;
 import outils.Ffmpeg;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 public class LecteurVideo implements Runnable {
@@ -61,14 +53,12 @@ public class LecteurVideo implements Runnable {
      * Arrête la lecture depuis un autre thread : arrêt de la video.
      */
     public void arreter() {
-
+        //TODO
     }
 
     public boolean estEnCours() {
         //System.out.println("En cours --> " + Thread.currentThread().getName());
         return thread != null && thread.isAlive();
     }
-
-
 
 }

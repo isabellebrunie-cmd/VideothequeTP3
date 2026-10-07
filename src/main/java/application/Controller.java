@@ -38,7 +38,7 @@ public class Controller {
 
         //Le mot de passe enregistré pour l'exemple (https://bcrypt.fr)
         //Sinon demander à enregistrer un mot de passe avant avec la fonction createPassword()
-        String password = "$2y$10$z5x0I/EnOfrrjgN/VdGSZuTr3SAONZjsfU4XPp3QN9s4nJxLu5E2q";
+        String password = "$2y$10$z5x0I/EnOfrrjgN/VdGSZuTr3SAONZjsfU4XPp3QN9s4nJxLu5E2q"; //J'a1meLeJava
 
         do {
             String PassWordATester = saisieString("Veuillez saisir votre mot de passe de connexion : ");

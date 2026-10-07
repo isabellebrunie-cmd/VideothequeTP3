@@ -1,7 +1,6 @@
-
 import application.Controller;
-import application.Videotheque;
 import exceptions.*;
+
 import java.util.InputMismatchException;
 
 public class Main {
@@ -66,6 +65,5 @@ public class Main {
             }
         }
     }
-
 
 }

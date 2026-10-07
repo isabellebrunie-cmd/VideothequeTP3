@@ -2,9 +2,7 @@ package application;
 
 import exceptions.*;
 import modele.*;
-import outils.Ffmpeg;
 import outils.Streamer;
-import video.ConvertisseurVideo;
 import video.LecteurVideo;
 
 import java.io.File;

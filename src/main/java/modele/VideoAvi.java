@@ -26,7 +26,6 @@ public class VideoAvi extends FichierVideo {
         options.add("libmp3lame");
         options.add("-b:a");
         options.add("192k");
-
         return options;
     }
 

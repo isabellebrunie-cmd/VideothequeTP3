@@ -1,24 +1,17 @@
 package modele;
 
 import exceptions.ConversionImpossibleException;
-import exceptions.LectureImpossibleException;
-import exceptions.SaisieInvalideException;
 import exceptions.VideoIntrouvableException;
-import outils.Ffmpeg;
 import video.ConvertisseurVideo;
 import video.LecteurVideo;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public abstract class FichierVideo extends Video implements Convertible {
-
     private String chemin;
 
     public FichierVideo(String titre, String realisateur, LocalDate dateSortie, int duree) {
@@ -34,7 +27,6 @@ public abstract class FichierVideo extends Video implements Convertible {
 
     //Récupère la taille du fichier en Mo
     public Double getTaille(File file) {
-        // TODO
         if (!file.exists()) {
             throw new VideoIntrouvableException("\u001B[31mFichier introuvable.\u001B[0m");
         }
@@ -48,7 +40,6 @@ public abstract class FichierVideo extends Video implements Convertible {
         }
         return tailleMo;
     }
-
 
     @Override
     public FichierVideo convertir(String formatCible) throws ConversionImpossibleException, IOException, InterruptedException {
@@ -70,14 +61,12 @@ public abstract class FichierVideo extends Video implements Convertible {
             default:
                 throw new ConversionImpossibleException("Conversion impossible");
         }
-
         fichierSortie = new File(nomFichierSortie);
         System.out.println("Début de la conversion...");
         ConvertisseurVideo convertisseur = new ConvertisseurVideo(fichierEntree, fichierSortie, fichierConverti.optionEncodage());
         convertisseur.demarrer();
         return fichierConverti;
     }
-
 
     //Lance ffplay (outils) dans un thread daemon (package video -> LecteurVideo)
     @Override
@@ -92,6 +81,7 @@ public abstract class FichierVideo extends Video implements Convertible {
     protected abstract List<String> optionEncodage();
 
     protected abstract List<String> optionsStreaming();
+
     public List<String> getOptionsStreaming() {
         return this.optionsStreaming();
     }
