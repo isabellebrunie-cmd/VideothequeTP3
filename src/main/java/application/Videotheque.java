@@ -12,14 +12,17 @@ import java.util.ArrayList;
 
 public class Videotheque implements GestionVideotheque {
 
-    private ArrayList<Video> videotheque;
+    private ArrayList<Video> videotheque = new ArrayList<>();
+    private final Streamer streamer;
+    private StreamVideo streamEnCours;
 
-    public Videotheque(ArrayList<Video> videotheque) {
+    public Videotheque(ArrayList<Video> videotheque, Streamer streamer) {
         this.videotheque = videotheque;
+        this.streamer = streamer;
     }
 
-    public Videotheque() {
-        this.videotheque = new ArrayList<>();
+    public Videotheque(Streamer streamer) {
+        this.streamer = streamer;
     }
 
     private LecteurVideo lecteur;
@@ -108,7 +111,7 @@ public class Videotheque implements GestionVideotheque {
         }
     }
 
-    public void arreterLecture() {
+    public void arreterLecture() throws LectureImpossibleException {
         if (lecteur == null || !lecteur.estEnCours())
             throw new LectureImpossibleException("Il n'y a pas de lecture en cours.");
         lecteur.arreter(); // TODO arrete la lecture
@@ -133,13 +136,18 @@ public class Videotheque implements GestionVideotheque {
         return fichierConverti;
     }
 
-    public void diffuserVideo(String nomFichier) throws ConversionImpossibleException {
+    public void diffuserVideo(String nomFichier) throws ConversionImpossibleException, VideoIntrouvableException, VideothequeVideException, LectureImpossibleException {
         //Rechercher la vidéo demandée
         Video videoaADiffuser = rechercherVideo(nomFichier);
 
         //Tester si la vidéo demandée est bien un fichierVideo / DVD refusé
         if (!(videoaADiffuser instanceof FichierVideo)) {
             throw new LectureImpossibleException("!! Erreur : '" + videoaADiffuser.getTitre() + " n'est pas un fichier video.");
+        }
+
+        if (streamEnCours != null && streamEnCours.estEnCours()) {
+            System.out.println("Un flux est déjà en cours de diffusion.");
+            return;
         }
 
         //Demander le nom du flux : donner par défaut pour simplifer les tests : rtmp
@@ -149,13 +157,22 @@ public class Videotheque implements GestionVideotheque {
 
         //diffuserFichier() a besoin : d'un fichierVideo, le nom du flux (String)
         // et un boolean (true pour une diffusion en boucle)
-        try {
-            StreamVideo sv = new StreamVideo((FichierVideo) videoaADiffuser, nomFlux, true);
-            sv.demarrer();
-            System.out.println("Début du stream !");
-        } catch (ConversionImpossibleException e) {
-            System.out.println(e.getMessage());
+        streamEnCours = new StreamVideo((FichierVideo) videoaADiffuser, nomFlux, true, streamer);
+        streamEnCours.demarrer();
+        System.out.println("Début du stream !");
+    }
+
+    public void arreterStream() {
+        if (streamEnCours == null || !streamEnCours.estEnCours()) {
+            System.out.println("Aucun stream en cours.");
+            return;
         }
+        streamEnCours.arreter();
+        System.out.println("Arrêt du stream !");
+    }
+
+    public void sauvegarder(StockageJson dataJson) {
+        dataJson.sauvegarder(videotheque);
     }
 
 }

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Streamer {
-
     private final String urlServeur;     // ex. "rtsp://192.168.1.50:8554"
     private volatile Process processus;  // ffmpeg en cours (partagé entre threads)
     private String fluxEnCours;          // nom du chemin diffusé, ex. "film"
@@ -21,7 +20,7 @@ public class Streamer {
     /**
      * ffmpeg -re [-stream_loop -1] -i fichier <options du format> <sortie>
      */
-    public static void diffuserFichier(FichierVideo video, String nomFlux, boolean boucle)
+    public void diffuserFichier(FichierVideo video, String nomFlux, boolean boucle)
             throws StreamingException, SaisieInvalideException {
         List<String> commande = new ArrayList<>();
         commande.add("ffmpeg.exe");
@@ -34,11 +33,9 @@ public class Streamer {
         commande.add("-i");
         commande.add(video.getChemin());
         commande.addAll(video.getOptionsStreaming());
-
         commande.add("-f");
         commande.add("flv");
-
-        commande.add("rtmp://172.16.120.28:1935/live");
+        commande.add(urlServeur + "/" + nomFlux);
         //commande.add(urlServeur);
         //System.out.println(commande);
 
@@ -46,10 +43,15 @@ public class Streamer {
             ProcessBuilder pb = new ProcessBuilder(commande);
             pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
             pb.redirectError(ProcessBuilder.Redirect.DISCARD);
-            Process processus = pb.start();
-            processus.waitFor();
+
+            this.processus = pb.start();
+            this.fluxEnCours = nomFlux;
+
+            this.processus.waitFor();
         } catch (IOException | InterruptedException e) {
             throw new StreamingException("Erreur lors de la diffusion.");
+        } finally {
+            this.processus = null;
         }
     }
 
@@ -99,7 +101,11 @@ public class Streamer {
      * Arrête proprement ffmpeg : envoie "q" sur son entrée standard,
      * attend 5 s au maximum, sinon destroy().
      */
-    public void arreter() { /* TODO */ }
+    public void arreter() {
+        if (processus != null && processus.isAlive()) {
+            processus.destroy();
+        }
+    }
 
     public boolean estEnCours() {
         return processus != null && processus.isAlive();
@@ -108,14 +114,15 @@ public class Streamer {
     /**
      * URL à donner aux spectateurs, ex. rtsp://.../film
      */
-    public String getUrlLecture() { /* TODO */
-        return "";
+    public String getUrlServeur() {
+        return urlServeur;
     }
 
     /**
      * -f rtsp -rtsp_transport tcp rtsp://serveur:8554/nomFlux
      */
     private List<String> optionsSortie(String nomFlux) { /* TODO */
+
         return List.of();
     }
 

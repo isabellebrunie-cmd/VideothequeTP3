@@ -6,6 +6,7 @@ import exceptions.SaisieInvalideException;
 import exceptions.VideoIntrouvableException;
 import exceptions.VideothequeVideException;
 import modele.*;
+import outils.Streamer;
 import video.LecteurVideo;
 
 import java.io.File;
@@ -18,11 +19,13 @@ import java.util.Scanner;
 
 public class Controller {
     public static Scanner scan = new Scanner(System.in);
-    private Videotheque videotheque = new Videotheque();
+    private Videotheque videotheque;
     private LecteurVideo lecteur;
     private static final List<String> formatFichierNumAccepte = List.of("AVI", "MP4");
-    private static Videotheque v = new Videotheque();
 
+    public Controller(Streamer streamer) {
+        this.videotheque = new Videotheque(streamer);
+    }
 
     //Création de mot de passe -> dans le cas où on demanderait à l'utilisateur de créer son mdp
     public char[] createPassword() {
@@ -63,8 +66,9 @@ public class Controller {
         System.out.println("5. Lire une video");
         System.out.println("6. Convertir une vidéo");
         System.out.println("7. Diffuser une vidéo en streaming");
-        System.out.println("8. Diffuser la caméra du laptop");
+        System.out.println("8. Diffuser la caméra du laptop -> pas encore disponible");
         System.out.println("9. Arrêter la diffusion");
+        System.out.println("10. Sauvegarder la vidéothèque");
         System.out.println("0. Quitter");
         System.out.println("=====================================");
     }
@@ -183,7 +187,7 @@ public class Controller {
         return nom;
     }
 
-    public LocalDate saisieDate(String msg) throws SaisieInvalideException {
+    public LocalDate saisieDate(String msg) throws SaisieInvalideException, DateTimeParseException {
         while (true) {
             System.out.print(msg);
             String saisie = scan.nextLine();
@@ -200,7 +204,7 @@ public class Controller {
         }
     }
 
-    public static int saisieInt(String msg) {
+    public static int saisieInt(String msg) throws NumberFormatException {
         while (true) {
             System.out.print(msg);
             String saisie = scan.nextLine();
@@ -212,7 +216,7 @@ public class Controller {
         }
     }
 
-    public static double saisieDouble(String msg) {
+    public static double saisieDouble(String msg) throws NumberFormatException {
         while (true) {
             System.out.print(msg);
             String saisie = scan.nextLine();
@@ -224,13 +228,13 @@ public class Controller {
         }
     }
 
-    public void convertirVideo() {
+    public void convertirVideo() throws VideoIntrouvableException, VideothequeVideException, ConversionImpossibleException, SaisieInvalideException, IOException, InterruptedException {
         try {
             String titre = saisieString("Saisir le nom du fichier à convertir : ");
             String format = saisieString("Saisir le format de conversion : ");
             videotheque.convertirVideo(titre, format);
         } catch (VideoIntrouvableException | VideothequeVideException | ConversionImpossibleException |
-                 SaisieInvalideException | IOException | InterruptedException e) {
+                 SaisieInvalideException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -240,7 +244,7 @@ public class Controller {
         videotheque.lireVideo(titre);
     }
 
-    public void diffuserVideo() {
+    public void diffuserVideo() throws VideoIntrouvableException, VideothequeVideException {
         try {
             String nomFichier = saisieString("Saisir le nom du fichier à diffuser : ");
             videotheque.diffuserVideo(nomFichier);
@@ -254,6 +258,11 @@ public class Controller {
     //TODO Diffusion de la camera du laptop (choix 8)
     // demande le nom du flux et diffuse la caméra
 
-    //TODO Choix 9 :  arrête la diffusion en cours
+    public void arreterStream() {
+        videotheque.arreterStream();
+    }
 
+    public void sauvegarderVideotheque(StockageJson dataJson) {
+        videotheque.sauvegarder(dataJson);
+    }
 }

@@ -1,17 +1,21 @@
 import application.Controller;
 import exceptions.*;
+import modele.StockageJson;
 import outils.Streamer;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.InputMismatchException;
 
 public class Main {
-    private static final Streamer streamer = new Streamer("rtsp://192.168.1.50:8554");
+    private static final Streamer streamer = new Streamer("rtmp://172.16.120.28:1935");
 
     public static void main(String[] args) {
-        Controller c = new Controller();
+        Controller c = new Controller(streamer);
+        StockageJson dataJson = new StockageJson(Path.of("data", "videotheque.json"));
 
         //Login par mot de passe déjà enregistré
-        c.login();
+        //c.login();
 
         //Affichage du menu
         c.peuplerVideotheque("mp4");
@@ -49,8 +53,11 @@ public class Main {
                         //Diffuser la caméra du laptop
                         //break;
                     case 9:
-                        //Arrêter la diffusion
-                        //break;
+                        c.arreterStream();
+                        break;
+                    case 10:
+                        c.sauvegarderVideotheque(dataJson);
+                        break;
                     case 0:
                         System.out.println("Au revoir !");
                         Controller.scan.close();
@@ -65,6 +72,8 @@ public class Main {
             } catch (InputMismatchException ime) {
                 Controller.scan.nextLine();
                 System.out.println("\u001B[31mSaisie non valide\u001B[0m");
+            } catch (InterruptedException | IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }

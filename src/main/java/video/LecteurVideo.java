@@ -54,6 +54,8 @@ public class LecteurVideo implements Runnable {
      */
     public void arreter() {
         //TODO
+        arretDemande = true;
+
     }
 
     public boolean estEnCours() {
