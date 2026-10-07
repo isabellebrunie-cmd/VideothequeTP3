@@ -4,6 +4,7 @@ import exceptions.ConversionImpossibleException;
 import exceptions.VideoIntrouvableException;
 import video.ConvertisseurVideo;
 import video.LecteurVideo;
+import video.StreamVideo;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,7 +74,6 @@ public abstract class FichierVideo extends Video implements Convertible {
     public void lire() {
         File fichierALIre = getFichier();
         String nomFichier = getChemin();
-
         LecteurVideo lv = new LecteurVideo(fichierALIre, nomFichier);
         lv.demarrer();
     }

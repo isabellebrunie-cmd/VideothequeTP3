@@ -23,8 +23,6 @@ public class Streamer {
      */
     public static void diffuserFichier(FichierVideo video, String nomFlux, boolean boucle)
             throws StreamingException, SaisieInvalideException {
-        /* TODO */
-
         List<String> commande = new ArrayList<>();
         commande.add("ffmpeg.exe");
         commande.add("-re");
@@ -42,8 +40,7 @@ public class Streamer {
 
         commande.add("rtmp://172.16.120.28:1935/live");
         //commande.add(urlServeur);
-
-        System.out.println(commande);
+        //System.out.println(commande);
 
         try {
             ProcessBuilder pb = new ProcessBuilder(commande);

@@ -1,13 +1,16 @@
 import application.Controller;
 import exceptions.*;
+import outils.Streamer;
 
 import java.util.InputMismatchException;
 
 public class Main {
+    private static final Streamer streamer = new Streamer("rtsp://192.168.1.50:8554");
+
     public static void main(String[] args) {
         Controller c = new Controller();
 
-        //Login
+        //Login par mot de passe déjà enregistré
         c.login();
 
         //Affichage du menu
@@ -43,11 +46,11 @@ public class Main {
                         c.diffuserVideo();
                         break;
                     case 8:
-                        //c.convertirVideo();
-                        break;
+                        //Diffuser la caméra du laptop
+                        //break;
                     case 9:
-                        //c.convertirVideo();
-                        break;
+                        //Arrêter la diffusion
+                        //break;
                     case 0:
                         System.out.println("Au revoir !");
                         Controller.scan.close();

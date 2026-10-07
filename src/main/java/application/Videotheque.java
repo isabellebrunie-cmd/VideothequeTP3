@@ -4,6 +4,7 @@ import exceptions.*;
 import modele.*;
 import outils.Streamer;
 import video.LecteurVideo;
+import video.StreamVideo;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,14 +97,12 @@ public class Videotheque implements GestionVideotheque {
     @Override
     public void lireVideo(String titre) throws
             VideoIntrouvableException, VideothequeVideException, LectureImpossibleException {
-        //System.out.println("non");
+        //Rechercher la video
         Video videoaALire = rechercherVideo(titre);
         if (!(videoaALire instanceof VideoAvi || videoaALire instanceof VideoMp4 || videoaALire instanceof Dvd)) {
-            //System.out.println("oui");
             throw new LectureImpossibleException("!! Erreur : '" + videoaALire.getTitre() + " n'est pas un fichier video.");
         }
         videoaALire.lire();
-        //System.out.println("peut etre");
         if ((videoaALire instanceof VideoAvi) | (videoaALire instanceof VideoMp4)) {
             System.out.println("Lecture de \"" + videoaALire.getTitre() + "\" lancée. Bonne écoute !");
         }
@@ -135,21 +134,28 @@ public class Videotheque implements GestionVideotheque {
     }
 
     public void diffuserVideo(String nomFichier) throws ConversionImpossibleException {
+        //Rechercher la vidéo demandée
         Video videoaADiffuser = rechercherVideo(nomFichier);
+
+        //Tester si la vidéo demandée est bien un fichierVideo / DVD refusé
         if (!(videoaADiffuser instanceof FichierVideo)) {
             throw new LectureImpossibleException("!! Erreur : '" + videoaADiffuser.getTitre() + " n'est pas un fichier video.");
         }
+
         //Demander le nom du flux : donner par défaut pour simplifer les tests : rtmp
         String nomFlux = "rtmp";
-        //Diffusion continue par défaut
 
+        //TODO  Afficher les URL RTSP et HSL à communiquer aux spectateurs
+
+        //diffuserFichier() a besoin : d'un fichierVideo, le nom du flux (String)
+        // et un boolean (true pour une diffusion en boucle)
         try {
-            Streamer.diffuserFichier((FichierVideo) videoaADiffuser, nomFlux, true);
-            System.out.println("Conversion terminée !");
+            StreamVideo sv = new StreamVideo((FichierVideo) videoaADiffuser, nomFlux, true);
+            sv.demarrer();
+            System.out.println("Début du stream !");
         } catch (ConversionImpossibleException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
 }

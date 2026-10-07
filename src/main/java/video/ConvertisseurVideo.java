@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class ConvertisseurVideo implements Runnable {
-
     File entree;
     File sortie;
     List<String> options;

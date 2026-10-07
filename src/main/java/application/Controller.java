@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class Controller {
@@ -25,17 +24,15 @@ public class Controller {
     private static Videotheque v = new Videotheque();
 
 
-    //Création de mot de passe
-    public char[] createPassword(){
+    //Création de mot de passe -> dans le cas où on demanderait à l'utilisateur de créer son mdp
+    public char[] createPassword() {
         String NewPassword = saisieString("Veuillez saisir votre nouveau mot de passe de connexion : ");
         return BCrypt.withDefaults().hashToChar(12, NewPassword.toCharArray());
     }
 
-
     //Connexion avec mot de passe
     public void login() {
         boolean res = false;
-
         //Le mot de passe enregistré pour l'exemple (https://bcrypt.fr)
         //Sinon demander à enregistrer un mot de passe avant avec la fonction createPassword()
         String password = "$2y$10$z5x0I/EnOfrrjgN/VdGSZuTr3SAONZjsfU4XPp3QN9s4nJxLu5E2q"; //J'a1meLeJava
@@ -53,7 +50,6 @@ public class Controller {
             } else {
                 System.out.println("Mot de passe incorrect");
             }
-
         } while (!res);
     }
 
@@ -104,7 +100,6 @@ public class Controller {
             return;
         }
         System.out.println("Problème d'extension de fichier (AVI/MP4)");
-        return;
     }
 
     public void ajouterVideo() {
@@ -245,14 +240,6 @@ public class Controller {
         videotheque.lireVideo(titre);
     }
 
-//    public static String hashPassword(String password) {
-//        // Définir
-//        int logRounds = 12;
-//
-//        String salt = BCrypt.gensalt(logRounds);
-//        return BCrypt.hashpw(password, salt);
-//    }
-
     public void diffuserVideo() {
         try {
             String nomFichier = saisieString("Saisir le nom du fichier à diffuser : ");
@@ -261,9 +248,12 @@ public class Controller {
                  SaisieInvalideException e) {
             System.out.println(e.getMessage());
         }
-        //TODO demander nom flux
-        //TODO demander si diffusion continue
+        //TODO demander si diffusion continue -> mis par défaut cf Videotheque
     }
 
+    //TODO Diffusion de la camera du laptop (choix 8)
+    // demande le nom du flux et diffuse la caméra
+
+    //TODO Choix 9 :  arrête la diffusion en cours
 
 }
