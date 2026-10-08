@@ -39,7 +39,7 @@ public class Streamer {
         commande.add("-f");
         commande.add("flv");
         commande.add(urlServeur + "/" + nomFlux);
-        //commande.add(urlServeur);
+
         //System.out.println(commande);
 
         try {
@@ -64,6 +64,8 @@ public class Streamer {
     public void diffuserCamera(String nomFlux)
             throws StreamingException, SaisieInvalideException {
         /* TODO */
+        String videoDevice = "Integrated Camera";
+        String audioDevice = "Microphone (Realtek(R) Audio)";
         List<String> commande = new ArrayList<>();
         commande.add("ffmpeg");
 
@@ -80,7 +82,7 @@ public class Streamer {
             commande.add("30");
             commande.add("-i");
             //Check le nom des périphériques video et audi de la machine distante
-            commande.add("video=\"Integrated Camera\":audio=\"Microphone (Realtek(R) Audio)\"");
+            commande.add("video=\""+videoDevice+"\":audio=\""+audioDevice+"\"");
             commande.add("-c:v");
             commande.add("libx264");
             commande.add("-preset");
@@ -151,7 +153,7 @@ public class Streamer {
     }
 
     /**
-     * Lance ffmpeg et lit sa sortie dans un thread daemon.
+     * Lance ffmpeg et lit sa sortie dans un thread daemon. => Fait avec le fichier Streamer dans outils ^^'
      */
     private void lancer(List<String> commande, String nomFlux)
             throws StreamingException { /* TODO */

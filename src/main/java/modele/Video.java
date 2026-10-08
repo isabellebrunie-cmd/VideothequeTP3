@@ -12,7 +12,7 @@ import java.time.LocalDate;
         getterVisibility = JsonAutoDetect.Visibility.NONE,
         isGetterVisibility = JsonAutoDetect.Visibility.NONE,
         setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "Nom")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = VideoAvi.class, name = "Video avi"),
         @JsonSubTypes.Type(value = VideoMp4.class, name = "Video mp4"),

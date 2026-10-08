@@ -19,6 +19,7 @@ public class Main {
 
         //Affichage du menu
         c.peuplerVideotheque("mp4");
+        c.peuplerVideotheque("avi");
         int choix = -1;
 
         while (true) {

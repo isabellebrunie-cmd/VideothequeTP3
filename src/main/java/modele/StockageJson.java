@@ -40,7 +40,7 @@ public class StockageJson {
 
             //ajout du noeud maison pour la liste des appareils
             ObjectNode home = mapper.createObjectNode();
-            home.put("Nom", "Vidéotheque");
+            home.put("Nom", "Vidéothèque");
             ArrayNode tab = racine.putArray("videos");
             for (Video v : videotheque) {
                 tab.add(mapper.valueToTree(v));

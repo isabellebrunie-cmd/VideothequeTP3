@@ -78,15 +78,22 @@ public class Controller {
         String pointExtension = "." + extension;
         File dossier = new File("media/");
         File[] fichiers = dossier.listFiles();
+
         if (fichiers == null) {
             return;
         }
+
         if (extension.equalsIgnoreCase("mp4")) {
             for (File f : fichiers) {
                 if (f.getName().endsWith(pointExtension)) {
-                    FichierVideo fv = new VideoMp4(f.getName().replace(pointExtension, ""), f.getName().replace(pointExtension, "Auteur"),
-                            LocalDate.now(), 0) {
-                    };
+
+                    FichierVideo fv = new VideoMp4(
+                            f.getName().replace(pointExtension, ""),
+                            f.getName().replace(pointExtension, "Auteur"),
+                            LocalDate.now(),
+                            0
+                    );
+
                     videotheque.ajouterVideo(fv);
                 }
             }
@@ -96,14 +103,20 @@ public class Controller {
         if (extension.equalsIgnoreCase("avi")) {
             for (File f : fichiers) {
                 if (f.getName().endsWith(pointExtension)) {
-                    FichierVideo fv = new VideoAvi(f.getName().replace(pointExtension, ""), f.getName().replace(pointExtension, "Auteur"),
-                            LocalDate.now(), 0) {
-                    };
+
+                    FichierVideo fv = new VideoAvi(
+                            f.getName().replace(pointExtension, ""),
+                            f.getName().replace(pointExtension, "Auteur"),
+                            LocalDate.now(),
+                            0
+                    );
+
                     videotheque.ajouterVideo(fv);
                 }
             }
             return;
         }
+
         System.out.println("Problème d'extension de fichier (AVI/MP4)");
     }
 
