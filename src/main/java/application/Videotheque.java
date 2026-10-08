@@ -72,7 +72,6 @@ public class Videotheque implements GestionVideotheque {
 
     @Override
     public void listerVideos() throws VideothequeVideException {
-        // TODO
         if (videotheque.isEmpty())
             throw new VideothequeVideException("La vidéothèque est vide");
         System.out.println(videotheque);
@@ -80,8 +79,7 @@ public class Videotheque implements GestionVideotheque {
 
     @Override
     public Video rechercherVideo(String titre) throws VideoIntrouvableException, VideothequeVideException {
-        // TODO
-        System.out.println(videotheque);
+        //System.out.println(videotheque);
         if (videotheque.isEmpty())
             throw new VideothequeVideException("La vidéothèque est vide");
         for (Video video : videotheque)
@@ -173,6 +171,15 @@ public class Videotheque implements GestionVideotheque {
 
     public void sauvegarder(StockageJson dataJson) {
         dataJson.sauvegarder(videotheque);
+    }
+
+    public void controleArretStream () {
+        if (streamEnCours == null || !streamEnCours.estEnCours()) {
+            System.out.println("Aucun stream en cours. Le programme peut s'arrêter normalement.");
+            return;
+        }
+        streamEnCours.arreter();
+        System.out.println("Un stream était en cours. Le processus a été arrêté. Le programme peut s'arrêter normalement.");
     }
 
 }

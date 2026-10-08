@@ -265,4 +265,9 @@ public class Controller {
     public void sauvegarderVideotheque(StockageJson dataJson) {
         videotheque.sauvegarder(dataJson);
     }
+
+    public void controleArretStream(){
+        videotheque.controleArretStream();
+    }
+
 }
