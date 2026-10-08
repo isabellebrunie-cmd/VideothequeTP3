@@ -4,6 +4,7 @@ import exceptions.SaisieInvalideException;
 import exceptions.StreamingException;
 import modele.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -65,7 +66,10 @@ public class Streamer {
      * ffmpeg <entrée caméra selon le système> <encodage direct> <sortie>
      */
     public void diffuserCamera(String nomFlux)
-            throws StreamingException, SaisieInvalideException { /* TODO */ }
+            throws StreamingException, SaisieInvalideException {
+        /* TODO */
+
+    }
 
     /**
      * Arrête proprement ffmpeg : envoie "q" sur son entrée standard,
