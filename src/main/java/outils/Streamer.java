@@ -105,6 +105,7 @@ public class Streamer {
      * attend 5 s au maximum, sinon destroy().
      */
     public void arreter() {
+        // Si un flux est en cours
         if (!estEnCours()) {
             return;
         }
