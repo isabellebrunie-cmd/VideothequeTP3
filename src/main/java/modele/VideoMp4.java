@@ -33,7 +33,7 @@ public class VideoMp4 extends FichierVideo {
 
     @Override
     public String toString() {
-        return super.toString() + "VideoMp4{}";
+        return "Video MP4 : Titre : "+ super.getTitre() + " ; Réalisateur : "+ super.getRealisateur() + " ; Date de sortie : "+ super.getDateSortie() + " ; Durée : "+ super.getDuree();
     }
 
     @Override
