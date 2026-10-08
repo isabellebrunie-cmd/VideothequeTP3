@@ -5,8 +5,11 @@ import exceptions.StreamingException;
 import modele.*;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class Streamer {
 
@@ -68,7 +71,25 @@ public class Streamer {
      * Arrête proprement ffmpeg : envoie "q" sur son entrée standard,
      * attend 5 s au maximum, sinon destroy().
      */
-    public void arreter() { /* TODO */ }
+    public void arreter() {
+        /* TODO */
+        if (!estEnCours()) {
+            return;
+        }
+        try {
+            processus.getOutputStream().write("q\n".getBytes());
+            processus.getOutputStream().flush();
+            // Attendre 5s sinon détruire
+            if (!processus.waitFor(5, TimeUnit.SECONDS)) {
+                processus.destroy();
+            }
+        } catch (IOException e) {
+            processus.destroy();
+        } catch (InterruptedException e) {
+            processus.destroy();
+            Thread.currentThread().interrupt();
+        }
+    }
 
     public boolean estEnCours() {
         return processus != null && processus.isAlive();
@@ -99,5 +120,40 @@ public class Streamer {
      * Lance ffmpeg et lit sa sortie dans un thread daemon.
      */
     private void lancer(List<String> commande, String nomFlux)
-            throws StreamingException { /* TODO */ }
+            throws StreamingException {
+        /* TODO */
+        ProcessBuilder constructeur = new ProcessBuilder(commande);
+        constructeur.redirectErrorStream(true);
+
+        Process lancement;
+        try {
+            lancement = constructeur.start();
+        } catch (IOException e) {
+            throw new StreamingException("Impossible de lancer ffmpeg.");
+        }
+        processus = lancement;
+        fluxEnCours = nomFlux;
+
+        Thread lecteurSortie = new Thread(() -> {
+            try (BufferedReader sortie = new BufferedReader(new InputStreamReader(lancement.getInputStream()))) {
+                while (sortie.readLine() != null) {
+                    //
+                }
+            } catch (IOException e) {
+                //
+            }
+        });
+        lecteurSortie.setName("Streamer-" + nomFlux);
+        lecteurSortie.setDaemon(true);
+        lecteurSortie.start();
+
+        try {
+            if (lancement.waitFor(3, TimeUnit.SECONDS)) {
+                throw new StreamingException("ffmpeg s'est arrêté (code " + lancement.exitValue()
+                        + ") : serveur injoignable");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 }
