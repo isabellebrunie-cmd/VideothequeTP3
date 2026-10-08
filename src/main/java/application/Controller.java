@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Controller {
@@ -228,6 +229,21 @@ public class Controller {
         }
     }
 
+    public static String nomFlux(String msg) throws SaisieInvalideException {
+        while (true) {
+            System.out.print(msg);
+            String nomFlux = scan.nextLine();
+            if (nomFlux.isEmpty()) {
+                throw new SaisieInvalideException("\u001B[31mSaisie vide !\u001B[0m");
+            }
+            if (!(nomFlux.matches("[A-Za-z0-9_]+"))) {
+                throw new SaisieInvalideException("\u001B[31mVeuillez entrer un nom de flux valide\u001B[0m");
+            }
+            return nomFlux;
+        }
+    }
+
+
     public void convertirVideo() throws VideoIntrouvableException, VideothequeVideException, ConversionImpossibleException, SaisieInvalideException, IOException, InterruptedException {
         try {
             String titre = saisieString("Saisir le nom du fichier à convertir : ");
@@ -244,19 +260,38 @@ public class Controller {
         videotheque.lireVideo(titre);
     }
 
-    public void diffuserVideo() throws VideoIntrouvableException, VideothequeVideException {
+    public void diffuserVideo() throws VideoIntrouvableException, VideothequeVideException, ConversionImpossibleException, SaisieInvalideException {
         try {
             String nomFichier = saisieString("Saisir le nom du fichier à diffuser : ");
-            videotheque.diffuserVideo(nomFichier);
-        } catch (VideoIntrouvableException | VideothequeVideException |
+
+            String nomFlux = saisieString("Saisir le nom du flux : ");
+
+            /*
+            boolean boucle = false;
+            boolean res= false;
+            do {
+                String diff = saisieString("Voulez-vous une diffusion continue? o/n : ");
+                if (Objects.equals(diff, "o")) {
+                    res =true;
+                    boucle = true;
+                } else if (Objects.equals(diff, "n")) {
+                    res =false;
+                    boucle = true;
+                } else {
+                    System.out.println("Réponse incorrecte");
+                }
+            } while (!boucle);
+*/
+            videotheque.diffuserVideo(nomFichier, nomFlux, true);
+
+        } catch (VideoIntrouvableException | VideothequeVideException | ConversionImpossibleException |
                  SaisieInvalideException e) {
             System.out.println(e.getMessage());
         }
-        //TODO demander si diffusion continue -> mis par défaut cf Videotheque
     }
 
-    //TODO Diffusion de la camera du laptop (choix 8)
-    // demande le nom du flux et diffuse la caméra
+//TODO Diffusion de la camera du laptop (choix 8)
+// demande le nom du flux et diffuse la caméra
 
     public void arreterStream() {
         videotheque.arreterStream();
@@ -266,7 +301,7 @@ public class Controller {
         videotheque.sauvegarder(dataJson);
     }
 
-    public void controleArretStream(){
+    public void controleArretStream() {
         videotheque.controleArretStream();
     }
 

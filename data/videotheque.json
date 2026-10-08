@@ -1,0 +1,12 @@
+{
+  "Propriétaire" : "CDA",
+  "Version" : "1.0",
+  "videos" : [ {
+    "type" : "Controller$1",
+    "chemin" : "media/planete_MP4.MP4",
+    "dateSortie" : "2026-10-08",
+    "duree" : 0,
+    "realisateur" : "planete_MP4Auteur",
+    "titre" : "planete_MP4"
+  } ]
+}

@@ -1,5 +1,6 @@
 package application;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import exceptions.*;
 import modele.*;
 import outils.Streamer;
@@ -9,6 +10,7 @@ import video.StreamVideo;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Videotheque implements GestionVideotheque {
 
@@ -134,7 +136,7 @@ public class Videotheque implements GestionVideotheque {
         return fichierConverti;
     }
 
-    public void diffuserVideo(String nomFichier) throws ConversionImpossibleException, VideoIntrouvableException, VideothequeVideException, LectureImpossibleException {
+    public void diffuserVideo(String nomFichier, String nomFlux, boolean diffContinu) throws ConversionImpossibleException, VideoIntrouvableException, VideothequeVideException, LectureImpossibleException {
         //Rechercher la vidéo demandée
         Video videoaADiffuser = rechercherVideo(nomFichier);
 
@@ -148,14 +150,9 @@ public class Videotheque implements GestionVideotheque {
             return;
         }
 
-        //Demander le nom du flux : donner par défaut pour simplifer les tests : rtmp
-        String nomFlux = "rtmp";
-
         //TODO  Afficher les URL RTSP et HSL à communiquer aux spectateurs
 
-        //diffuserFichier() a besoin : d'un fichierVideo, le nom du flux (String)
-        // et un boolean (true pour une diffusion en boucle)
-        streamEnCours = new StreamVideo((FichierVideo) videoaADiffuser, nomFlux, true, streamer);
+        streamEnCours = new StreamVideo((FichierVideo) videoaADiffuser, nomFlux, diffContinu, streamer);
         streamEnCours.demarrer();
         System.out.println("Début du stream !");
     }
