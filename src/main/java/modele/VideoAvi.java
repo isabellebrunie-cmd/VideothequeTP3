@@ -31,7 +31,7 @@ public class VideoAvi extends FichierVideo {
 
     @Override
     public String toString() {
-        return super.toString() + "AVI";
+        return "Video AVI : Titre : " + super.getTitre() + " ; Réalisateur : " + super.getRealisateur() + " ; Date de sortie : " + super.getDateSortie() + " ; Durée : " + super.getDuree();
     }
 
     @Override

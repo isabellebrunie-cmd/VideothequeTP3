@@ -59,6 +59,7 @@ public class Main {
                         c.sauvegarderVideotheque(dataJson);
                         break;
                     case 0:
+                        c.controleArretStream();
                         System.out.println("Au revoir !");
                         Controller.scan.close();
                         System.exit(0);

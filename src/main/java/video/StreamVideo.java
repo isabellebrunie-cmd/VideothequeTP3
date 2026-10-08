@@ -9,8 +9,8 @@ public class StreamVideo implements Runnable {
     private final String nomFlux;
     private volatile boolean diffContinue;
     private volatile boolean arretDemande;
-    private Thread thread;
-    private final Streamer streamer;
+    private Thread thread; // gère l'exécution en arrière-plan
+    private final Streamer streamer; // référence vers l'objet qui gère le processus ffmpeg
 
     public StreamVideo(FichierVideo video, String nomFlux, boolean diffContinue, Streamer streamer) {
         this.video = video;
@@ -55,12 +55,16 @@ public class StreamVideo implements Runnable {
      * Arrête la lecture depuis un autre thread : arrêt de la video.
      */
     public void arreter() {
-        arretDemande = true;
-        streamer.arreter();
+        if (thread != null && thread.isAlive()) {
+            arretDemande = true;
+            streamer.arreter();
+        } else {
+            System.out.println("Il n'y a pas de lecture en cours.");
+        }
     }
 
     public boolean estEnCours() {
         //System.out.println("En cours --> " + Thread.currentThread().getName());
-        return thread != null && thread.isAlive();
+        return streamer.estEnCours();
     }
 }
